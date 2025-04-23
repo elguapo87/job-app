@@ -1,8 +1,7 @@
-import { useContext } from "react"
+import { useContext, useState } from "react"
 import { AppContext } from "../context/AppContext"
 import { assets, JobCategories, JobLocations } from "../assets/assets";
 import JobCard from "./JobCard";
-
 
 const JobListing = () => {
 
@@ -11,7 +10,9 @@ const JobListing = () => {
         throw new Error("JobListing must be used within an AppContextProvider");
     }
     const { isSearched, searchFilter, setSearchFilter, jobs } = context;
-  
+
+    const [showFilter, setShowFilter] = useState(false);              
+    
     return (
         <div className="container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8">
             {/* SIDEBAR */}
@@ -36,7 +37,7 @@ const JobListing = () => {
                             {
                                 searchFilter.location
                                      && 
-                                <span className="ml-2 inline-flex items-center gap-2.5 bg-red-50 border border-red-200 px-4 py-1.5 rounded">
+                                <span className="ml-2 inline-flex items-center gap-2.5 bg-red-50 border border-red-200 px-4 py-1.5 rounded">      
                                     {searchFilter.location}
                                     <img onClick={() => setSearchFilter(prev => ({ ...prev, location: "" }))} className="cursor-pointer" src={assets.cross_icon} alt="" />
                                 </span>
@@ -45,8 +46,12 @@ const JobListing = () => {
                     </>
                 }
 
+                <button className="lg:hidden px-6 py-1.5 rounded border border-gray-400" onClick={() => setShowFilter(prev => !prev)}>      
+                    {showFilter ? "Close" : "Filters"}
+                </button>
+
                 {/* CATEGORY FILTER */}
-                <div className="max-lg:hidden">
+                <div className={showFilter ? "" : "max-lg:hidden"}>                                 
                     <h4 className="font-medium text-lg py-4">Search by Categories</h4>
 
                     <ul className="space-y-4 text-gray-600">
@@ -59,8 +64,8 @@ const JobListing = () => {
                     </ul>
                 </div>
 
-                {/* LOCATION FILTER */}
-                <div className="max-lg:hidden">
+                {/* LOCATION FILTER */}                                                                    
+                <div className={showFilter ? "" : "max-lg:hidden"}>                                
                     <h4 className="font-medium text-lg py-4 pt-14">Search by Location</h4>
 
                     <ul className="space-y-4 text-gray-600">
