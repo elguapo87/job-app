@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import mongoDBConnect from "./config/dbConnect";
 import { clerkWebhooks } from "./controllers/webhooks";
+import companyRoutes from "./routes/companyRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,6 +14,7 @@ app.use(express.json());
 
 // Routes
 app.post("/webhooks", clerkWebhooks);
+app.use("/api/company", companyRoutes);
 
 app.get("/", (req, res) => {
     res.send("API is working");
