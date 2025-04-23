@@ -139,22 +139,58 @@ export const getCompanyData = async (req: AuthRequest, res: Response): Promise<a
     }
 };
 
+// Function to get company posted jobs
+export const getCompanyJobs = async (req: AuthRequest, res: Response): Promise<any> => {
+    try {
+        if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+        const companyId = req.companyId;
+
+        const companyJobs = await jobModel.find({companyId});
+
+        res.json({ success: true, companyJobs });
+        
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+        res.json({ success: false, message: errMessage });
+    }
+};
+
+// Function to change job visibility
+export const changeJobVisibility = async (req: AuthRequest, res: Response): Promise<any> => {
+    try {
+        if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+        const companyId = req.companyId;
+
+        const { id } = req.body;
+        if (!id) return res.json({ success: false, message: "Job ID is required" });
+
+        const job = await jobModel.findById(id);
+
+        if (companyId.toString() === job.companyId.toString()) {
+            job.visible = !job.visible;
+
+        } else {
+            return res.json({ success: false, message: "Unauthorized to change this job visibility" });
+        }
+
+        await job.save();
+
+        res.json({ success: true, message: "Visibility Changed", job });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
+};
+
+
 // Get Company Job Applicants
 export const getCompanyJobApplicants = async (req: Request, res: Response) => {
 
 };
 
-// Get Company Posted Jobs
-export const getCompanyPostedJobs = async (req: Request, res: Response) => {
-
-};
 
 // Change Job Application Status
 export const changeJobApplicationStatus = async (req: Request, res: Response) => {
-
-};
-
-// Change Job Visibility
-export const changeJobVisibility = async (req: Request, res: Response) => {
 
 };
