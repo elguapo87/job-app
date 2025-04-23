@@ -61,9 +61,33 @@ export const registerCompany = async (req: Request, res: Response): Promise<any>
     }
 };
 
-// Company Login 
-export const loginCompany = async (req: Request, res: Response) => {
+// Function for company login
+export const companyLogin = async (req: Request, res: Response): Promise<any> => {
+    const { email, password } = req.body;
 
+    try {
+        const company = await companyModel.findOne({ email });
+        if (!company) return res.json({ success: false, message: "Company is not registered" });
+
+        // Matching password with password from DB
+        const isPasswordMatching = await bcrypt.compare(password, company.password);
+        if (!isPasswordMatching) return res.json({ success: false, message: "Invalid Credentials" });
+
+        res.json({
+            success: true,
+            message: "Successfully Logged in",
+            company: {
+                name: company.name,
+                email: company.email,
+                image: company.image
+            },
+            token: generateToken(company._id.toString())
+        });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
 };
 
 // Get Company Data

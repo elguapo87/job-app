@@ -1,5 +1,5 @@
 import express from "express";
-import { changeJobVisibility, getCompanyData, getCompanyPostedJobs, loginCompany, postJob, registerCompany } from "../controllers/companyController";
+import { changeJobVisibility, companyLogin, getCompanyData, getCompanyPostedJobs, postJob, registerCompany } from "../controllers/companyController";
 import upload from "../config/multer";
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 router.post("/register", upload.single("image"), registerCompany);
 
 // Company Login
-router.post("/login", loginCompany);
+router.post("/login", companyLogin);
 
 // Post Job
 router.post("/post-job", postJob);
