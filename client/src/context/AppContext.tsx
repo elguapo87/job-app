@@ -29,7 +29,9 @@ interface AppContextType {
     isSearched: boolean;
     setIsSearched: React.Dispatch<React.SetStateAction<boolean>>;
     jobs: JobsTypes[];                                                  
-    setJobs: React.Dispatch<React.SetStateAction<JobsTypes[]>>         
+    setJobs: React.Dispatch<React.SetStateAction<JobsTypes[]>>;
+    showRecruiterLogin: boolean;                                                   
+    setShowRecruiterLogin: React.Dispatch<React.SetStateAction<boolean>>;          
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
 
     const [isSearched, setIsSearched] = useState(false);
     const [jobs, setJobs] = useState<JobsTypes[]>([]);
+    const [showRecruiterLogin, setShowRecruiterLogin] = useState(false); 
 
     // Function to fetch job data                          
     const fetchJobs = async () => {
@@ -56,7 +59,8 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
     const value = {
         searchFilter, setSearchFilter,
         isSearched, setIsSearched,
-        jobs, setJobs                               
+        jobs, setJobs,
+        showRecruiterLogin, setShowRecruiterLogin                               
     }
 
     return (
