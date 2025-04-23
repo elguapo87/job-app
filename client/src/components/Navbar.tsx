@@ -1,32 +1,39 @@
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react"
 import { assets } from "../assets/assets"
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
 
-  const { openSignIn } = useClerk();                 
-  const { user } = useUser(); 
-  
+  const { openSignIn } = useClerk();
+  const { user } = useUser();
+
   const navigate = useNavigate();
 
+  const context = useContext(AppContext);                                           
+  if (!context) throw new Error("Navbar must be inside AppContextProvider");        
+
+  const { setShowRecruiterLogin } = context;                                         
+  
   return (
     <div className="shadow py-4">
         <div className="container px-4 2xl:px-20 mx-auto flex justify-between items-center">
-        <img onClick={() => navigate("/")} className="cursor-pointer w-[130px] sm:w-[180px]" src={assets.company_logo} alt="" />
+          <img onClick={() => navigate("/")} className="cursor-pointer" src={assets.logo} alt="" />
 
           {
-            user                                 
+            user
              ?
             <div className="flex items-center gap-3">
               <Link to="/applications">Applied Jobs</Link>
               <p>|</p>
-              <p>Hy, {user.firstName && user.lastName ? user.firstName + " " + user.lastName : "John Doe"}</p>
+              <p className="max-sm:hidden">Hy, {user.firstName && user.lastName ? user.firstName + " " + user.lastName : "John Doe"}</p>
               <UserButton />
             </div>
              :
             <div className="flex gap-4 max-sm:text-xs">
-              <button className="text-gray-600">Recruiter Login</button>
-              <button onClick={() => openSignIn()} className="bg-blue-600 text-white px-6 sm:px-9 py-2 rounded-full ">Login</button>    
+              <button onClick={() => setShowRecruiterLogin(true)} className="text-gray-600">Recruiter Login</button>                    
+              <button onClick={() => openSignIn()} className="bg-blue-600 text-white px-6 sm:px-9 py-2 rounded-full ">Login</button>
             </div>
           }
         </div>
