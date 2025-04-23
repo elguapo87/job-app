@@ -5,6 +5,7 @@ import mongoDBConnect from "./config/dbConnect";
 import { clerkWebhooks } from "./controllers/webhooks";
 import companyRoutes from "./routes/companyRoutes";
 import connectCloudinary from "./config/cloudinary";
+import jobRoutes from "./routes/jobRoutes";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -16,6 +17,7 @@ app.use(express.json());
 // Routes
 app.post("/webhooks", clerkWebhooks);
 app.use("/api/company", companyRoutes);
+app.use("/api/jobs", jobRoutes);
 
 app.get("/", (req, res) => {
     res.send("API is working");
