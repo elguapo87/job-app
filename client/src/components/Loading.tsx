@@ -1,4 +1,4 @@
-const Loading = ({ position } : { position: "normal" | "center" }) => {
+const Loading = ({ position } : { position?: "normal" | "center" }) => {
     return (
       <div className={`w-screen h-screen flex items-center justify-center ${position === "center" && "-translate-x-[8%] -translate-y-[6%]"}`}>
           <div className="flex flex-col items-center gap-2">
