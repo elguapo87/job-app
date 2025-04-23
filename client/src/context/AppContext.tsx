@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { jobsData } from "../assets/assets";
 
 interface SearchFilter {
@@ -48,6 +48,10 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
     const fetchJobs = async () => {
         setJobs(jobsData);
     };
+
+    useEffect(() => {                              
+        fetchJobs();
+    }, []);
 
     const value = {
         searchFilter, setSearchFilter,
