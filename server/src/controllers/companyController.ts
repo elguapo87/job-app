@@ -4,6 +4,8 @@ import companyModel from "../models/companyModel";
 import { v2 as cloudinary } from "cloudinary";
 import generateToken from "../utils/generateToken";
 import validator from "validator";
+import { AuthRequest } from "../middlewares/companyAuth";
+import jobModel from "../models/jobModel";
 
 // Function to register company
 export const registerCompany = async (req: Request, res: Response): Promise<any> => {
@@ -90,14 +92,51 @@ export const companyLogin = async (req: Request, res: Response): Promise<any> =>
     }
 };
 
-// Get Company Data
-export const getCompanyData = async (req: Request, res: Response) => {
 
+// Function for post a new job
+export const postJob = async (req: AuthRequest, res: Response): Promise<any> => {
+    const { title, description, location, category, level, salary } = req.body;
+
+    if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+    const companyId = req.companyId;
+
+    try {
+        const newJob = new jobModel({
+            title,
+            description,
+            location,
+            category,
+            level,
+            salary,
+            date: Date.now(),
+            companyId: companyId
+        });
+
+        const savedJob = await newJob.save();
+        res.json({ success: true, message: "Job added successfully", savedJob });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
 };
 
-// Post a New Job
-export const postJob = async (req: Request, res: Response) => {
+// Function to get company data
+export const getCompanyData = async (req: AuthRequest, res: Response): Promise<any> => {
+    if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+    const companyId = req.companyId;
 
+    try {
+        const companyData = await companyModel.findById(companyId);
+
+        const { password, ...companyRest } = companyData._doc;
+
+        res.json({ success: true, companyRest });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
 };
 
 // Get Company Job Applicants
