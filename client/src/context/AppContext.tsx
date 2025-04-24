@@ -1,11 +1,11 @@
 import { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { useAuth, useUser } from "@clerk/clerk-react";
 
 interface SearchFilter {
     title: string;
-    location: string
+    location: string;
 }
 
 interface JobsData {
@@ -75,13 +75,15 @@ interface AppContextType {
     companyToken: string | null;
     setCompanyToken: React.Dispatch<React.SetStateAction<string | null>>
     companyData: CompanyData | null;
-    setCompanyData: React.Dispatch<React.SetStateAction<CompanyData | null>>;
+    setCompanyData: React.Dispatch<React.SetStateAction<CompanyData | null>>
     userData: UserData | null;
     setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
     fetchUserData: () => Promise<void>;
     appliedJobs: AppliedJobs[] | [];
     setAppliedJobs: React.Dispatch<React.SetStateAction<AppliedJobs[] | []>>;
     fetchAppliedJobs: () => Promise<void>;
+    showEdit: boolean;
+    setShowEdit: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -92,7 +94,7 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
 
     const { user } = useUser();
 
-    const { getToken } = useAuth();
+    const { getToken } = useAuth(); 
 
     const [searchFilter, setSearchFilter] = useState({
         title: "",
@@ -100,13 +102,20 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
     });
 
     const [isSearched, setIsSearched] = useState(false);
+
     const [jobs, setJobs] = useState<JobsData[]>([]);
+
     const [showRecruiterLogin, setShowRecruiterLogin] = useState(false);
+
     const [companyToken, setCompanyToken] = useState(localStorage.getItem("companyToken") ? localStorage.getItem("companyToken") : null);
+    
     const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+
     const [userData, setUserData] = useState<UserData | null>(null);
 
     const [appliedJobs, setAppliedJobs] = useState<AppliedJobs[] | []>([]);
+
+    const [showEdit, setShowEdit] = useState(false)
 
     // Function to fetch jobs
     const fetchJobs = async () => {
@@ -126,8 +135,8 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         }
     };
 
-     // Function to fetch company data
-     const fetchCompanyData = async () => {
+    // Function to fetch company data
+    const fetchCompanyData = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/company/company-data`, {
                 headers: {
@@ -147,6 +156,7 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
             toast.error(errMessage);
         }
     };
+
 
     // Function to fetch user data
     const fetchUserData = async () => {
@@ -172,6 +182,7 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         }
     };
 
+
     // Function to fetch applied jobs
     const fetchAppliedJobs = async () => {
         try {
@@ -196,15 +207,18 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         }
     };
 
-    useEffect(() => {                              
+
+    useEffect(() => {
         fetchJobs();
     }, []);
+
 
     useEffect(() => {
         if (companyToken) {
             fetchCompanyData();
         }
     }, [companyToken]);
+
 
     useEffect(() => {
         if (user) {
@@ -224,8 +238,9 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         userData, setUserData,
         fetchUserData,
         fetchAppliedJobs,
-        appliedJobs, setAppliedJobs,                               
-    }
+        appliedJobs, setAppliedJobs,
+        showEdit, setShowEdit
+    };
 
     return (
         <AppContext.Provider value={value}>

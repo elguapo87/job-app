@@ -7,7 +7,7 @@ const Dashboard = () => {
 
   const context = useContext(AppContext);
   if (!context) throw new Error("Dashboard must be within AppContextProvider");
-  const { companyData, setCompanyToken, setCompanyData } = context;
+  const { companyData, setCompanyToken, setCompanyData, showEdit, setShowEdit } = context;
 
   const [showLogut, setShowLogout] = useState(false);
 
@@ -62,18 +62,26 @@ const Dashboard = () => {
         {/* LEFT SIDEBAR */}
         <div className='inline-block min-h-screen border-r-2'>
           <ul className='flex flex-col gap-3 items-start pt-5 text-gray-800'>
-      
-            <NavLink className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="add-job">
-              <img className='min-w-4 max-sm:max-w-[20px]' src={assets.add_icon} alt="" />
-              <p className='max-sm:hidden lg:text-xl'>Add Job</p>
-            </NavLink>
-       
-            <NavLink className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="manage-jobs">
+            {
+              showEdit
+                 ?
+              <div className={`flex items-center p-3 sm:px-6 gap-2 w-full hover:bg-gray-100 ${showEdit && "bg-blue-100 border-r-4 border-blue-500"}`}>
+                <img className="min-w-4 max-w-6" src={assets.edit_icon} alt="" />
+                <p className="max-sm:hidden lg:text-xl">Edit Job</p>
+              </div>
+                 :
+              <NavLink className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="add-job">
+                <img className='min-w-4 max-sm:max-w-[20px]' src={assets.add_icon} alt="" />
+                <p className='max-sm:hidden lg:text-xl'>Add Job</p>
+              </NavLink>
+            }
+
+            <NavLink onClick={() => setShowEdit(false)} className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="manage-jobs">
               <img className='min-w-4 max-sm:max-w-[20px]' src={assets.home_icon} alt="" />
               <p className='max-sm:hidden lg:text-xl'>Manage Jobs</p>
             </NavLink>
 
-            <NavLink className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="view-applications">
+            <NavLink onClick={() => setShowEdit(false)} className={({isActive}) => `flex items-center gap-2 p-3 sm:px-6 w-full hover:bg-gray-100 ${isActive && "bg-blue-100 border-r-4 border-blue-500"}`} to="view-applications">
               <img className='min-w-4 max-sm:max-w-[20px]' src={assets.person_tick_icon} alt="" />
               <p className='max-sm:hidden lg:text-xl'>View Applications</p>
             </NavLink>

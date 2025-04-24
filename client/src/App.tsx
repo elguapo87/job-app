@@ -11,6 +11,7 @@ import ManageJobs from "./pages/ManageJobs"
 import ViewApplications from "./pages/ViewApplications"
 import "quill/dist/quill.snow.css"
 import { ToastContainer } from 'react-toastify' 
+import EditJob from "./pages/EditJob"
 
 const App = () => {
 
@@ -51,6 +52,7 @@ const App = () => {
             <Route path="add-job" element={<AddJob />} />
             <Route path="manage-jobs" element={<ManageJobs />} />
             <Route path="view-applications" element={<ViewApplications />} />
+            <Route path="edit-job/:id" element={<EditJob />} />
           </Route>
              :
           <Route path="/dashboard" element={<RecruiterLogin onClose={handleCloseRecruiterLogin} />} />
