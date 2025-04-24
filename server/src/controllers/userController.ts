@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import userModel from "../models/userModel";
 import jobApplyModel from "../models/jobApplyModel";
 import jobModel from "../models/jobModel";
+import { v2 as cloudinary } from "cloudinary";
 
 interface AuthenticatedRequest extends Request {
     auth?: AuthObject;
@@ -68,6 +69,31 @@ export const getUserApplyData = async (req: AuthenticatedRequest, res: Response)
             if (!jobsApplied) return res.json({ success: false, message: "No jobs applications found" });
 
             res.json({ success: true, jobsApplied });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+        res.json({ success: false, message: errMessage });
+    }
+};
+
+// Function for update user resume (only)
+export const updateUserResume = async (req: AuthenticatedRequest, res: Response): Promise<any> => {
+    if (!req.auth || !req.auth.userId) return res.json({ success: false, message: "Unauthorized" });
+    const userId = req.auth.userId;
+
+    const resumeFile = req.file;
+
+    try {
+        const userData = await userModel.findById(userId);
+        
+        if (resumeFile) {
+            const resumeUpload = await cloudinary.uploader.upload(resumeFile.path);
+            userData.resume = resumeUpload.secure_url;
+        }
+
+        await userData.save();
+
+        return res.json({ success: true, message: "Resume Updated" });
 
     } catch (error) {
         const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
