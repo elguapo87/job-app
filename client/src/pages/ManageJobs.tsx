@@ -24,7 +24,7 @@ const ManageJobs = () => {
 
   const context = useContext(AppContext);
   if (!context) throw new Error("ManageJobs must be within AppContextProvider");
-  const { backendUrl, companyToken } = context;
+  const { backendUrl, companyToken, setShowEdit } = context;
 
   const [jobsData, setJobsData] = useState<JobsData[]>([]);
 
@@ -88,6 +88,7 @@ const ManageJobs = () => {
               <th className="py-2 px-4 border-b text-left max-sm:hidden">Location</th>
               <th className="py-1.5 sm:py-2 sm:px-4 border-b text-center">Applicants</th>
               <th className="py-1.5 sm:py-2 sm:px-4 border-b text-left">Visible</th>
+              <th className="py-1.5 sm:py-2 sm:px-4 border-b text-left">Action</th>
             </tr>
           </thead>
 
@@ -102,6 +103,9 @@ const ManageJobs = () => {
                 <td className="py-1.5 sm:py-2 sm:px-4 border-b text-left">
                   <input onChange={() => changeVisibility(job._id)} type="checkbox" className="scale-110 sm:scale-125 ml-4" checked={job.visible} />
                 </td>
+                <td className="py-1.5 sm:py-2 sm:px-4 border-b text-left ">
+                  <button onClick={() => { navigate(`/dashboard/edit-job/${job._id}`); setShowEdit(true); }} className="px-[6px] py-[2px] sm:px-3 sm:py-1 bg-blue-600 text-white text-xs sm:text-sm rounded border-none">Edit</button>
+                </td>
               </tr>
             ))}
           </tbody>
@@ -109,7 +113,7 @@ const ManageJobs = () => {
       </div>
 
       <div className="mt-4 flex justify-end">
-        <button onClick={() => navigate("/dashboard/add-job")} className="bg-black text-white max-sm:text-xs py-1 px-2 sm:py-2 sm:px-4 rounded ">Add new job</button>
+        <button onClick={() => { navigate("/dashboard/add-job"); setShowEdit(false); }} className="bg-black text-white max-sm:text-xs py-1 px-2 sm:py-2 sm:px-4 rounded ">Add new job</button>
       </div>
     </div>
   ) : (

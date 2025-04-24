@@ -1,4 +1,4 @@
-import express from "express";
+import express, { application } from "express";
 import { applyForJob, getUserApplyData, getUserData, updateUserResume } from "../controllers/userController";
 import upload from "../config/multer";
 

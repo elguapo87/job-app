@@ -18,8 +18,16 @@ app.use(express.json());
 
 app.use(clerkMiddleware());
 
+// app.use(
+//     clerkMiddleware({
+//         publishableKey: process.env.PUBLIC_CLERK_PUBLISHABLE_KEY,
+//         secretKey: process.env.CLERK_SECRET_KEY,
+//     })
+// );
+
 // Routes
 app.post("/webhooks", clerkWebhooks);
+
 app.use("/api/company", companyRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/users", userRoutes);
@@ -27,7 +35,6 @@ app.use("/api/users", userRoutes);
 app.get("/", (req, res) => {
     res.send("API is working");
 });
-
 
 const startServer = async () => {
     try {

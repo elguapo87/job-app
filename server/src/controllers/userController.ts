@@ -55,6 +55,7 @@ export const applyForJob = async (req: AuthenticatedRequest, res: Response): Pro
     }
 };
 
+
 // Function for get user jobs applied data
 export const getUserApplyData = async (req: AuthenticatedRequest, res: Response): Promise<any> => {
     if (!req.auth || !req.auth.userId) return res.json({ success: false, message: "Unauthorized" });

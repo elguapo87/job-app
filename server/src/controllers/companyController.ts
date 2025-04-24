@@ -93,7 +93,6 @@ export const companyLogin = async (req: Request, res: Response): Promise<any> =>
     }
 };
 
-
 // Function for post a new job
 export const postJob = async (req: AuthRequest, res: Response): Promise<any> => {
     const { title, description, location, category, level, salary } = req.body;
@@ -139,6 +138,7 @@ export const getCompanyData = async (req: AuthRequest, res: Response): Promise<a
         res.json({ success: false, message: errMessage });
     }
 };
+
 
 // Function to get company posted jobs
 export const getCompanyJobs = async (req: AuthRequest, res: Response): Promise<any> => {
@@ -224,6 +224,7 @@ export const changeJobStatus = async (req: Request, res: Response): Promise<any>
         res.json({ success: false, message: errMessage });
     }
 };
+
 
 // Function to update job
 export const updateJob = async (req: Request, res: Response) => {

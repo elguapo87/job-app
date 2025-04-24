@@ -15,6 +15,9 @@ const ViewApplications = () => {
 
   const [applicants, setApplicants] = useState<any[] | []>([]);
 
+  console.log(applicants);
+  
+
   const fetchApplicants = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/company/applicants`, {

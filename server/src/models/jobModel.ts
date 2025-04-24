@@ -1,27 +1,45 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    _id: {
+const jobSchema = new mongoose.Schema({
+    title: {
         type: String,
         required: true
     },
-    name: {
+    description: {
         type: String,
         required: true
     },
-    email: {
+    location: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
-    resume: {
+    level: {
         type: String,
+        required: true
     },
-    image: {
-        type: String
+    category: {
+        type: String,
+        required: true
+    },
+    salary: {
+        type: Number,
+        required: true
+    },
+    visible: {
+        type: Boolean,
+        default: true
+    },
+    date: {
+        type: Number,
+        required: true
+    },
+    companyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "company",
+        required: true
     }
 });
 
-const userModel = mongoose.models.user || mongoose.model("user", userSchema);
+const jobModel = mongoose.models.job || mongoose.model("job", jobSchema);
 
-export default userModel;
+export default jobModel;
