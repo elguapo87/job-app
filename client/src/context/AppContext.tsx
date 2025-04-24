@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { jobsData } from "../assets/assets";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 interface SearchFilter {
     title: string;
@@ -32,6 +32,36 @@ interface CompanyData {
     image: string;
 }
 
+interface UserData {
+    _id: string;
+    name: string;
+    email: string;
+    image: string;
+    resume: string;
+}
+
+interface AppliedJobs {
+    companyId: {
+        _id: string;
+        name: string;
+        email: string;
+        image: string;
+    };
+    date: number;
+    jobId: {
+        category: string;
+        description: string;
+        level: string;
+        location: string;
+        salary: number;
+        title: string;
+        _id: string;
+    };
+    status: string;
+    userId: string;
+    _id: string;
+}
+
 interface AppContextType {
     searchFilter: SearchFilter;
     setSearchFilter: React.Dispatch<React.SetStateAction<SearchFilter>>;
@@ -46,6 +76,12 @@ interface AppContextType {
     setCompanyToken: React.Dispatch<React.SetStateAction<string | null>>
     companyData: CompanyData | null;
     setCompanyData: React.Dispatch<React.SetStateAction<CompanyData | null>>;
+    userData: UserData | null;
+    setUserData: React.Dispatch<React.SetStateAction<UserData | null>>;
+    fetchUserData: () => Promise<void>;
+    appliedJobs: AppliedJobs[] | [];
+    setAppliedJobs: React.Dispatch<React.SetStateAction<AppliedJobs[] | []>>;
+    fetchAppliedJobs: () => Promise<void>;
 };
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -53,6 +89,10 @@ export const AppContext = createContext<AppContextType | undefined>(undefined);
 const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
 
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    const { user } = useUser();
+
+    const { getToken } = useAuth();
 
     const [searchFilter, setSearchFilter] = useState({
         title: "",
@@ -64,6 +104,9 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
     const [showRecruiterLogin, setShowRecruiterLogin] = useState(false);
     const [companyToken, setCompanyToken] = useState(localStorage.getItem("companyToken") ? localStorage.getItem("companyToken") : null);
     const [companyData, setCompanyData] = useState<CompanyData | null>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
+
+    const [appliedJobs, setAppliedJobs] = useState<AppliedJobs[] | []>([]);
 
     // Function to fetch jobs
     const fetchJobs = async () => {
@@ -105,6 +148,54 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         }
     };
 
+    // Function to fetch user data
+    const fetchUserData = async () => {
+        try {
+            const token = await getToken(); 
+
+            const { data } = await axios.get(`${backendUrl}/api/users/user`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (data.success) {
+                setUserData(data.user);
+           
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+            toast.error(errMessage);
+        }
+    };
+
+    // Function to fetch applied jobs
+    const fetchAppliedJobs = async () => {
+        try {
+            const token = await getToken();
+
+            const { data } = await axios.get(`${backendUrl}/api/users/applied-jobs`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (data.success) {
+                setAppliedJobs(data.jobsApplied);
+     
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+            toast.error(errMessage);
+        }
+    };
+
     useEffect(() => {                              
         fetchJobs();
     }, []);
@@ -115,6 +206,13 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         }
     }, [companyToken]);
 
+    useEffect(() => {
+        if (user) {
+            fetchUserData();
+            fetchAppliedJobs();
+        }
+    }, [user]);
+
     const value = {
         searchFilter, setSearchFilter,
         isSearched, setIsSearched,
@@ -122,7 +220,11 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
         showRecruiterLogin, setShowRecruiterLogin,
         backendUrl,
         companyToken, setCompanyToken,
-        companyData, setCompanyData,                               
+        companyData, setCompanyData,
+        userData, setUserData,
+        fetchUserData,
+        fetchAppliedJobs,
+        appliedJobs, setAppliedJobs,                               
     }
 
     return (
