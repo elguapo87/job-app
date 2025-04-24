@@ -191,13 +191,36 @@ export const changeJobVisibility = async (req: AuthRequest, res: Response): Prom
 };
 
 
-// Get Company Job Applicants
-export const getCompanyJobApplicants = async (req: Request, res: Response) => {
+// Function to get company jobs applicants 
+export const getApplicants = async (req: AuthRequest, res: Response): Promise<any> => {
+    if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+    const companyId = req.companyId;
 
+    try {
+        const applicants = await jobApplyModel.find({ companyId })
+            .populate("userId", "name email image resume")
+            .populate("jobId", "title location category level salary")
+            .exec();
+
+        res.json({ success: true, applicants });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
 };
 
 
-// Change Job Application Status
-export const changeJobApplicationStatus = async (req: Request, res: Response) => {
+// Function to change job status
+export const changeJobStatus = async (req: Request, res: Response): Promise<any> => {
+    const { id, status } = req.body;
 
+    try {
+        await jobApplyModel.findOneAndUpdate({ _id: id }, { status });
+        res.json({ success: true, message: "Status Changed" });
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
 };
