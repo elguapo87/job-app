@@ -6,6 +6,7 @@ import generateToken from "../utils/generateToken";
 import validator from "validator";
 import { AuthRequest } from "../middlewares/companyAuth";
 import jobModel from "../models/jobModel";
+import jobApplyModel from "../models/jobApplyModel";
 
 // Function to register company
 export const registerCompany = async (req: Request, res: Response): Promise<any> => {
@@ -141,16 +142,22 @@ export const getCompanyData = async (req: AuthRequest, res: Response): Promise<a
 
 // Function to get company posted jobs
 export const getCompanyJobs = async (req: AuthRequest, res: Response): Promise<any> => {
+    if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
+    const companyId = req.companyId;
+
     try {
-        if (!req.companyId) return res.json({ success: false, message: "Unauthorized, no company data" });
-        const companyId = req.companyId;
+        const companyJobs = await jobModel.find({ companyId });
 
-        const companyJobs = await jobModel.find({companyId});
+        // Adding number of applicants info in data
+        const jobsData = await Promise.all(companyJobs.map(async (job) => {
+            const applicants = await jobApplyModel.find({ jobId: job._id });
+            return { ...job.toObject(), applicantsNumber: applicants.length };
+        }))
 
-        res.json({ success: true, companyJobs });
-        
+        res.json({ success: true, jobsData });
+
     } catch (error) {
-        const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
         res.json({ success: false, message: errMessage });
     }
 };
