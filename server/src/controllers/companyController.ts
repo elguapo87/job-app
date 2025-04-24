@@ -224,3 +224,25 @@ export const changeJobStatus = async (req: Request, res: Response): Promise<any>
         res.json({ success: false, message: errMessage });
     }
 };
+
+// Function to update job
+export const updateJob = async (req: Request, res: Response) => {
+    const { id, title, description, location, level, category, salary } = req.body;
+
+    try {
+        await jobModel.findByIdAndUpdate(id, {
+            title, 
+            description,
+            location,
+            category,
+            level,
+            salary
+        });
+
+        res.json({ success: true, message: "Job Updated" })
+
+    } catch (error) {
+        const errMessage = error instanceof Error ? error.message : "An unknown error occured";
+        res.json({ success: false, message: errMessage });
+    }
+};

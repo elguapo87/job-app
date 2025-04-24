@@ -1,7 +1,8 @@
 import express from "express";
-import { changeJobStatus, changeJobVisibility, companyLogin, getApplicants, getCompanyData, getCompanyJobs, postJob, registerCompany } from "../controllers/companyController";
+import { changeJobStatus, changeJobVisibility, companyLogin, getApplicants, getCompanyData, getCompanyJobs, postJob, registerCompany, updateJob } from "../controllers/companyController";
 import upload from "../config/multer";
 import protectCompany from "../middlewares/companyAuth";
+
 
 const router = express.Router();
 
@@ -28,5 +29,8 @@ router.get("/applicants", protectCompany, getApplicants);
 
 // Change job status
 router.post("/change-status", protectCompany, changeJobStatus);
+
+// Update job
+router.post("/update-job", protectCompany, updateJob);
 
 export default router;
