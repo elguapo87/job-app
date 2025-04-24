@@ -7,6 +7,8 @@ import { assets } from "../assets/assets";
 import moment from "moment";
 import JobCard from "../components/JobCard";
 import Footer from "../components/Footer";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const ApplyJob = () => {
 
@@ -15,24 +17,31 @@ const ApplyJob = () => {
   const context = useContext(AppContext);
   if (!context) throw new Error("ApplyJob must be used within an AppContextProvider");
 
-  const { jobs } : { jobs: any[] } = context;
+  const { jobs, backendUrl } = context;
 
   const [jobData, setJobData] = useState<any>(null);
   
   const fetchJob = async () => {
-    const data = jobs.find((job) => job._id === id);
-    if (data) {
-      setJobData(data);
-      console.log(data);
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/jobs/${id}`);
+
+      if (data.success) {
+        setJobData(data.job);
+
+      } else {
+        toast.error(data.message);
+      }
+
+    } catch (error) {
+      const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+      toast.error(errMessage);
     }
-    
-  }
+  };
 
   useEffect(() => {
-    if (jobs.length > 0) {
-      fetchJob();
-    }
-  }, [id, jobs]);
+    fetchJob();
+  }, [id]);
+  
   
   return jobData ? (
     <>

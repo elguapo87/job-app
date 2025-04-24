@@ -65,9 +65,22 @@ const AppContextProvider = ({ children } : { children: React.ReactNode }) => {
     const [companyToken, setCompanyToken] = useState(localStorage.getItem("companyToken") ? localStorage.getItem("companyToken") : null);
     const [companyData, setCompanyData] = useState<CompanyData | null>(null);
 
-    // Function to fetch job data                          
+    // Function to fetch jobs
     const fetchJobs = async () => {
-        setJobs(jobsData);
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/jobs/jobs`);
+
+            if (data.success) {
+                setJobs(data.jobs);
+
+            } else {
+                toast.error(data.message);
+            }
+
+        } catch (error) {
+            const errMessage = error instanceof Error ? error.message : "An unknown error occurred";
+            toast.error(errMessage);
+        }
     };
 
      // Function to fetch company data
